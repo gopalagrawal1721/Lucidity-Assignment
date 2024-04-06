@@ -1,0 +1,44 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class DeliverySchedulerTest {
+    @Test
+    public void testCalculateTravelTime() {
+        double distance = 10; // km
+        double expectedTravelTime = 0.5; // hours (10 km at 20 km/hr)
+        double actualTravelTime = DeliveryScheduler.calculateTravelTime(distance);
+        assertEquals(expectedTravelTime, actualTravelTime, 0.01);
+    }
+
+    @Test
+    public void testCalculateTotalTime() {
+        Location amanLocation = new Location("Aman", 12.9345, 77.6100);
+        Location restaurant1 = new Location("Restaurant 1", 12.9318, 77.6093);
+        Location restaurant2 = new Location("Restaurant 2", 12.9355, 77.6142);
+        Location consumer1 = new Location("Consumer 1", 12.9375, 77.6098);
+        Location consumer2 = new Location("Consumer 2", 12.9303, 77.6153);
+        Location deliveryExecutive = new Location("Delivery Executive", 12.9347, 77.6124);
+
+        double pt1 = 0.5; // 30 minutes
+        double pt2 = 0.75; // 45 minutes
+        
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(restaurant1, consumer1, deliveryExecutive, pt1));
+        orders.add(new Order(restaurant2, consumer2, deliveryExecutive, pt2));
+
+        double expectedTotalTime = 1.5; // Total preparation time + total travel time
+        double actualTotalTime = DeliveryScheduler.calculateTotalTime(orders, amanLocation);
+        
+        assertEquals(expectedTotalTime, actualTotalTime, 0.01); // Allow a small margin of error
+    }
+}
+
+
+In this test case:
+
+We define sample locations for Aman, two restaurants, two consumers, and a delivery executive.
+We assign sample preparation times for each restaurant.
+We create two orders with the defined locations and preparation times.
+We calculate the expected total time (sum of preparation times and travel times).
+We call the calculateTotalTime method with the sample orders and locations.
+We assert that the actual total time matches the expected total time with a small margin of error.
