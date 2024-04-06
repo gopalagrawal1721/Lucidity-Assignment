@@ -1,0 +1,53 @@
+Assumptions:
+1. The average speed of 20 km/hr is used to calculate travel time between locations.
+2. Preparation times for each restaurant are known and constant.
+3. Aman can deliver one order at a time.
+4. Orders cannot be delivered before they are prepared by the respective restaurants.
+5. Aman starts from his current location and returns there after completing all deliveries.
+6. Made it extensible for more restaurant and delivery executive.
+
+
+Here is the documentation for each method, explaining their purpose and usage:
+
+Location class:
+Represents a location on the map with a name, latitude, and longitude coordinates.
+Used to define the positions of Aman, restaurants, consumers, and delivery executives.
+
+
+Order class:
+Represents an order to be delivered, including the restaurant, consumer, delivery executive, and preparation time.
+Used to encapsulate information about each order.
+
+
+calculateDistance method:
+Purpose: Calculates the distance between two locations using the Haversine formula.
+Usage:
+Accepts two Location objects as parameters.
+Returns the distance in kilometers between the two locations.
+
+
+calculateTravelTime method:
+Purpose: Calculates the travel time based on the distance and average speed.
+Usage:
+Accepts the distance to be traveled in kilometers as a parameter.
+Returns the time required to travel the given distance in hours.
+
+
+calculateTotalTime method:
+Purpose: Calculates the total time required for delivering orders, including preparation and travel time.
+Usage:
+Accepts a list of Order objects and the location of the delivery executive as parameters.
+Returns the total time required for delivering all orders in hours.
+
+
+nearestNeighbor method:
+Purpose: Finds the nearest neighbor path using the given distance matrix.
+Usage:
+Accepts a distance matrix representing the distances between locations as a parameter.
+Returns a list of indices representing the nearest neighbor path.
+
+main method:
+Purpose: Entry point of the program.
+Usage:
+Initializes locations, orders, and calculates the total time for delivering orders.
+These methods collectively enable the calculation of the shortest delivery route and total time for a batch of orders to be delivered efficiently.
