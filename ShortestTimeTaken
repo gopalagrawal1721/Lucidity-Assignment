@@ -1,0 +1,135 @@
+import java.util.*;
+
+public class DeliveryScheduler {
+    // Represents a location (Aman's location, restaurant, or consumer)
+    static class Location {
+        String name;
+        double latitude;
+        double longitude;
+
+        public Location(String name, double latitude, double longitude) {
+            this.name = name;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+    }
+
+    // Represents an order (restaurant, consumer,delivery executive and preparation time)
+    static class Order {
+        Location restaurant;
+        Location consumer;
+        Location deliveryExecutive;
+        double preparationTime;
+
+        public Order(Location restaurant, Location consumer, double preparationTime) {
+            this.restaurant = restaurant;
+            this.consumer = consumer;
+            this.deliveryExecutive = deliveryExecutive;
+            this.preparationTime = preparationTime;
+        }
+    }
+
+    // Calculate distance using Haversine formula
+    static double calculateDistance(Location location1, Location location2) {
+        double earthRadius = 6371; // Radius of the Earth in kilometers
+        double latDiff = Math.toRadians(location2.latitude - location1.latitude);
+        double lonDiff = Math.toRadians(location2.longitude - location1.longitude);
+        double a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+                   Math.cos(Math.toRadians(location1.latitude)) * Math.cos(Math.toRadians(location2.latitude)) *
+                   Math.sin(lonDiff / 2) * Math.sin(lonDiff / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadius * c; // Distance in kilometers
+    }
+
+    // Calculate travel time based on distance and average speed
+    static double calculateTravelTime(double distance) {
+        double averageSpeed = 20; // Average speed in km/hr
+        return distance / averageSpeed; // Time in hours
+    }
+
+    // Calculate total time for delivering orders
+    static double calculateTotalTime(List<Order> orders, Location amanLocation) {
+        List<Location> locations = new ArrayList<>();
+        locations.add(amanLocation);
+
+        for (Order order : orders) {
+            locations.add(order.restaurant);
+            locations.add(order.consumer);
+        }
+
+        double[][] distanceMatrix = new double[locations.size()][locations.size()];
+
+        for (int i = 0; i < locations.size(); i++) {
+            for (int j = 0; j < locations.size(); j++) {
+                distanceMatrix[i][j] = calculateDistance(locations.get(i), locations.get(j));
+            }
+        }
+
+        List<Integer> path = nearestNeighbor(distanceMatrix);
+
+        double totalTime = 0;
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            int current = path.get(i);
+            int next = path.get(i + 1);
+
+            Location currentLocation = locations.get(current);
+            Location nextLocation = locations.get(next);
+
+            double distance = distanceMatrix[current][next];
+            totalTime += calculateTravelTime(distance);
+
+            if (i % 2 == 0) { // Restaurant to consumer
+                totalTime += orders.get(i / 2).preparationTime;
+            }
+        }
+
+        return totalTime;
+    }
+
+    static List<Integer> nearestNeighbor(double[][] distanceMatrix) {
+        int n = distanceMatrix.length;
+        boolean[] visited = new boolean[n];
+        List<Integer> path = new ArrayList<>();
+        int current = 0;
+        visited[0] = true;
+        path.add(0);
+
+        for (int i = 0; i < n - 1; i++) {
+            double minDist = Double.MAX_VALUE;
+            int next = -1;
+
+            for (int j = 0; j < n; j++) {
+                if (!visited[j] && distanceMatrix[current][j] < minDist) {
+                    minDist = distanceMatrix[current][j];
+                    next = j;
+                }
+            }
+
+            path.add(next);
+            visited[next] = true;
+            current = next;
+        }
+
+        path.add(0); // Return to starting point
+        return path;
+    }
+
+    public static void main(String[] args) {
+        Location amanLocation = new Location("Aman", /* Aman coordinates */);
+        Location restaurant1 = new Location("Restaurant 1", /* Restaurant 1 coordinates */);
+        Location restaurant2 = new Location("Restaurant 2", /* Restaurant 2 coordinates */);
+        Location consumer1 = new Location("Consumer 1", /* Consumer 1 coordinates */);
+        Location consumer2 = new Location("Consumer 2", /* Consumer 2 coordinates */);
+
+        double pt1 = /* Preparation time for Restaurant 1 */;
+        double pt2 = /* Preparation time for Restaurant 2 */;
+
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(restaurant1, consumer1, amanLocation, pt1));
+        orders.add(new Order(restaurant2, consumer2, amanLocation, pt2));
+
+        double totalTime = calculateTotalTime(orders, amanLocation);
+        System.out.println("Total time to deliver orders: " + totalTime + " hours");
+    }
+}
